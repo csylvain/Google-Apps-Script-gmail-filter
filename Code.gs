@@ -17,15 +17,32 @@ function myFunction() {
     }
   }
   // process all threads from Mashable Deals in Inbox
-  threads = GmailApp.search("in:Inbox from:mashabledealsnewsletter");
+  threads = GmailApp.search("in:Inbox from:mashabledealsnewsletter newer_than:3h");
+  processThreads(threads, dealslabel);
   
+  // process all threads from Banggood in Inbox
+  threads = GmailApp.search("in:Inbox from:newsletter@deals.banggood.com newer_than:3h");
+  processThreads(threads, dealslabel);
+  
+  // process all threads from Drop.com in Inbox
+  threads = GmailApp.search("in:Inbox list:massdrop.1.0.sparkpostmail.com newer_than:3h");
+  processThreads(threads, dealslabel);
+  
+ var destlabel = GmailApp.getUserLabelByName("eCommerce/Discover Mag");
+  // process all threads from Discover Magazine in Inbox
+  threads = GmailApp.search("in:Inbox from:DiscoverMagazine@mail.kalmbachmail.com newer_than:3h");
+  processThreads(threads, destlabel);
+}
+
+function processThreads(threads, destlabel) {
+  // process all messages in search result parameter 'threads'
   for (var i = 0; i < threads.length; i++) {
     var messages = threads[i].getMessages();
     for (var j = 0; j < messages.length; j++) {
       var message = messages[j];
       // get the thread this message belongs to
       var thread = message.getThread();
-      dealslabel.addToThread(thread); // add message to Deals label
+      destlabel.addToThread(thread); // add message to label in parameter 'destlabel'
       thread.moveToArchive();
     }    
   }
